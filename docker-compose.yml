@@ -1,0 +1,64 @@
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    environment:
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      - ./data:/data
+    depends_on:
+      - db
+    ports:
+      - "8008:8008"  # Synapse HTTP port
+      - "8448:8448"  # Synapse federation port
+    networks:
+      - default
+  
+  # ngrok:
+  #   image: ngrok/ngrok:latest
+  #   command: >
+  #     start --all
+  #     --config /etc/ngrok.yml
+  #     --log /dev/null
+  #   environment:
+  #     - NGROK_AUTHTOKEN=************
+  #   volumes:
+  #     - ./ngrok.yml:/etc/ngrok.yml
+  #   networks:
+  #     - default
+  
+  db:
+    image: docker.io/postgres:12-alpine
+    environment:
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=synapse
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - ./schemas:/var/lib/postgresql/data
+    networks:
+      - default
+
+  element:
+    image: vectorim/element-web:latest
+    ports:
+      - "8080:80"  # Element web port
+    networks:
+      - default
+    volumes:
+      - ./config.json:/app/config.json
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - "80:80"
+  #     - "8448:8448"
+  #   networks:
+  #     - default
+  #   depends_on:
+  #     - synapse
+  #     - element
+  #     - db
+
+networks:
+  default:
+    driver: bridge
