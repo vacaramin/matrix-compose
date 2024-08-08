@@ -1,0 +1,45 @@
+# Configuration file for Synapse.
+#
+# This is a YAML file: see [1] for a quick introduction. Note in particular
+# that *indentation is important*: all the elements of a list or dictionary
+# should have the same indentation.
+#
+# [1] https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+#
+# For more information on how to configure Synapse, including a complete accounting of
+# each option, go to docs/usage/configuration/config_documentation.md or
+# https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html
+server_name: "beloved-vastly-longhorn.ngrok-free.app"
+pid_file: /data/homeserver.pid
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client, federation]
+        compress: false
+database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: synapse
+    database: synapse
+    host: matrix-compose-db-1 #you can use docker inspect container_name to fill host section
+    cp_min: 5
+    cp_max: 10
+log_config: "/data/beloved-vastly-longhorn.ngrok-free.app.log.config"
+media_store_path: /data/media_store
+enable_registration: True #added for use element
+suppress_key_server_warning: True #added for use element
+enable_registration_without_verification: True #added for use element
+registration_shared_secret: "NAQY9umvcd:29Nz5_m8UB=V@s,B:8JTLw.Z07&vYb.u:Zff*Rf"
+report_stats: true
+macaroon_secret_key: "T4I@NuvFGFt1UlE+vo7OgpEcPPeFN+mznt~cWBBFtXjIH;i:D9"
+form_secret: "8cyoO0p.OFEfJpYr@wkr#nE36cempuGw#3P;90Z,27&HSOsQE:"
+signing_key_path: "/data/beloved-vastly-longhorn.ngrok-free.app.signing.key"
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+
+# vim:ft=yaml
